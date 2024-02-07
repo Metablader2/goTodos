@@ -6,7 +6,7 @@ import (
 	"go-todo/pkg/handler"
 	"go-todo/pkg/repo"
 	"go-todo/pkg/service"
-	"io"
+	"go-todo/templates"
 	"log"
 	"net/http"
 	"os"
@@ -16,10 +16,12 @@ import (
 )
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Hello world!")
+	component := templates.Hello("Juan")
+	component.Render(r.Context(),w)
 }
 
 func main() {
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file juan")
