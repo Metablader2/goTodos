@@ -1,0 +1,59 @@
+package templates
+
+templ RegisterComponent() {
+    <div>
+        <form id="registerForm" hx-post="/register" hx-target="closest div" hx-swap="outerHTML">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required></input><br />
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required></input><br />
+            
+            <button type="submit" hx-trigger="submit">Register</button>
+        </form>
+    </div>
+}
+
+templ LogInComponent() {
+    <div id="loginContainer">
+        <form id="loginForm" hx-post="/login" hx-target="closest div" hx-swap="outerHTML">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required></input><br />
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required></input><br />
+            
+            <button type="submit" hx-trigger="submit">Log In</button>
+        </form>
+        <div>
+            Not a member?
+            <button id="RedirectionRegisterButton" hx-get="/?mode=register" hx-trigger="click" hx-swap="outerHTML" hx-target="#loginContainer">Sign Up</button>
+        </div>
+    </div>
+}
+
+templ Home() { 
+    <div>
+        Hello World!
+    </div>
+}
+
+templ MainView(mode string) {
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>
+                Welcome
+            </title>
+            <script src="/static/htmx.min.js"></script>
+        </head>
+        <body>
+            if mode == "register"{
+                @RegisterComponent()
+            }else{
+                @LogInComponent()                
+            }
+            
+        </body>
+    </html>
+}

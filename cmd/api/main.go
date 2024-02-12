@@ -15,9 +15,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func getIndex(w http.ResponseWriter, r *http.Request) {
-	component := templates.Hello("Juan")
-	component.Render(r.Context(),w)
+func getLogin(w http.ResponseWriter, r *http.Request) {
+	queryParams := r.URL.Query()
+	param := queryParams.Get("mode")
+
+	component := templates.MainView(param)
+	component.Render(r.Context(), w)
 }
 
 func main() {
@@ -34,12 +37,21 @@ func main() {
 	}
 	defer pool.Close()
 
+	userRepo := repo.NewUserRepo(pool)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
+
 	todoRepo := repo.NewTodoRepo(pool)
 	todoService := service.NewTodoService(todoRepo)
 	todoHandler := handler.NewTodoHandler(todoService)
 
-	http.HandleFunc("/", getIndex)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	http.HandleFunc("/", getLogin)
 	http.HandleFunc("/todo", todoHandler.Todo)
+	http.HandleFunc("/register", userHandler.Register)
+	http.HandleFunc("/login", userHandler.Login)
+
 	err = http.ListenAndServe(":8000", nil)
 
 	if err != nil {
